@@ -1,8 +1,8 @@
-from src.Homeworks.Homework_1.task1 import *
-
 from typing import Mapping
 
 import pytest
+
+from src.Homeworks.Homework_1.task1 import *
 
 MAPPING_REGISTRY = Registry[Mapping]()
 MAPPING_REGISTRY_WITH_DEFAULT = Registry[Mapping](default=dict)
