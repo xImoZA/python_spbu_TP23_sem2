@@ -17,7 +17,7 @@ class Registry(Generic[Interface]):
             raise ValueError(f"The name {name} has already been registered")
         return _decorator
 
-    def dispatch(self, name: str) -> Interface:
+    def dispatch(self, name: str) -> Optional[Interface] | Callable:
         if name in self.registry or self.default:
             return self.registry.get(name, self.default)
 
