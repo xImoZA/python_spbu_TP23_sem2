@@ -1,5 +1,5 @@
 import random
-from typing import Generic, Iterator, MutableMapping, Optional, Set, TypeVar
+from typing import Generic, Iterator, MutableMapping, Optional, Set, TypeVar, Tuple
 
 V = TypeVar("V")
 K = TypeVar("K")
@@ -10,8 +10,8 @@ class Node(Generic[K, V]):
         self.key = key
         self.value = value
         self.priority: float = random.random()
-        self.left: Optional["Node"] = None
-        self.right: Optional["Node"] = None
+        self.left: Optional[Node] = None
+        self.right: Optional[Node] = None
 
     def __iter__(self) -> Iterator[K]:
         def iterate(root: Optional[Node], output: Set[K]) -> Set[K]:
@@ -54,7 +54,7 @@ class Treap(MutableMapping):
             return False
 
     @staticmethod
-    def split_node(node: Node, key: K) -> tuple[Optional["Node"], Optional["Node"]]:
+    def split_node(node: Optional[Node], key: K) -> Tuple[Optional[Node], Optional[Node]]:
         if node is None:
             return None, None
 
@@ -68,7 +68,7 @@ class Treap(MutableMapping):
         return node1, node
 
     @staticmethod
-    def merge_node(left_node: Optional[Node], right_node: Optional[Node]) -> Optional["Node"]:
+    def merge_node(left_node: Optional[Node], right_node: Optional[Node]) -> Optional[Node]:
         if left_node is None:
             return right_node
 
@@ -85,9 +85,11 @@ class Treap(MutableMapping):
     def __setitem__(self, key: K, value: V) -> None:
         node1, node2 = Treap.split_node(self.root, key)
         try:
-            new_element: Node = self[key]
-            new_element.value = value
-            del self[key]
+            new_element: Optional[Node] = self[key]
+
+            if new_element:
+                new_element.value = value
+                del self[key]
 
         except KeyError:
             new_element = Node(key, value)
@@ -116,7 +118,7 @@ class Treap(MutableMapping):
         self.length -= 1
 
     @staticmethod
-    def get_item(root: Optional[Node], key) -> Optional["Node"]:
+    def get_item(root: Optional[Node], key: K) -> Node:
         if root is not None:
             if root.key < key:
                 return Treap.get_item(root.right, key)
@@ -129,10 +131,15 @@ class Treap(MutableMapping):
         raise KeyError(f"The key {key} is not in the Treap")
 
     def __getitem__(self, key: K) -> Optional[V]:
-        return Treap.get_item(self.root, key).value
+        try:
+            return Treap.get_item(self.root, key).value
+        except KeyError:
+            raise KeyError(f"The key {key} is not in the Treap")
 
     def __iter__(self) -> Iterator[K]:
-        return self.root.__iter__()
+        if self.root:
+            return self.root.__iter__()
+        raise KeyError(f"The Treap is empty")
 
     def __repr__(self) -> str:
         if self.root:
