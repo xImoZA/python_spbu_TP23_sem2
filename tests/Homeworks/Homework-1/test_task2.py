@@ -1,4 +1,5 @@
 from collections import Counter
+
 import pytest
 
 from src.Homeworks.Homework_1.task2 import *
