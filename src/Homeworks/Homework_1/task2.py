@@ -1,5 +1,5 @@
 import random
-from typing import Generic, Iterator, MutableMapping, Optional, Set, TypeVar, Tuple
+from typing import Generic, Iterator, MutableMapping, Optional, Set, Tuple, TypeVar
 
 V = TypeVar("V")
 K = TypeVar("K")
