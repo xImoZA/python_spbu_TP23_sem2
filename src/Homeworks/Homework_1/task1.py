@@ -1,5 +1,5 @@
 import collections
-from typing import Callable, Generic, Optional, TypeVar, Type, Dict
+from typing import Callable, Dict, Generic, Optional, Type, TypeVar
 
 ParentCls = TypeVar("ParentCls")
 
