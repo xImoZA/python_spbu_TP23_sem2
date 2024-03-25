@@ -1,70 +1,50 @@
-from typing import Mapping
-
 import pytest
 
 from src.Homeworks.Homework_1.task1 import *
 
-MAPPING_REGISTRY = Registry[Mapping]()
-MAPPING_REGISTRY_WITH_DEFAULT = Registry[Mapping](default=dict)
 
-
-@MAPPING_REGISTRY.register(name="Solo Leveling")
-class SoloLeveling(Mapping):
-    def __iter__(self) -> None:
+class TestRegistry:
+    class Cls:
         pass
 
-    def __getitem__(self, item) -> None:
+    registry = Registry[Cls]()
+    registry_with_default = Registry[Cls](default=dict)
+
+    class SoloLeveling(Cls):
         pass
 
-    def __len__(self) -> None:
+    class OmniscientReader(Cls):
         pass
 
+    registry.register("Solo Leveling")(SoloLeveling)
+    registry_with_default.register("Omniscient Reader")(OmniscientReader)
 
-@MAPPING_REGISTRY_WITH_DEFAULT.register(name="Omniscient Reader")
-class OmniscientReader(Mapping):
-    def __iter__(self) -> None:
-        pass
+    @pytest.mark.parametrize(
+        "name,storage,expected",
+        [
+            ("Solo Leveling", registry, SoloLeveling),
+            ("Omniscient Reader", registry_with_default, OmniscientReader),
+        ],
+    )
+    def test_registry(self, name: str, storage: Registry, expected: Cls) -> None:
+        assert name in storage.classes
+        assert storage.classes[name] == expected
 
-    def __getitem__(self, item) -> None:
-        pass
+    @pytest.mark.parametrize(
+        "storage,name,expected",
+        [
+            (registry, "Solo Leveling", SoloLeveling),
+            (registry_with_default, "Omniscient Reader", OmniscientReader),
+            (registry_with_default, "Mashle", dict),
+        ],
+    )
+    def test_dispatch(self, storage: Registry, name: str, expected: Cls) -> None:
+        assert storage.dispatch(name) == expected
 
-    def __len__(self) -> None:
-        pass
+    def test_raise_exception_register(self) -> None:
+        with pytest.raises(ValueError):
+            self.registry.register("Solo Leveling")(self.OmniscientReader)
 
-
-@pytest.mark.parametrize(
-    "register,name,expected",
-    [
-        (MAPPING_REGISTRY, "Solo Leveling", SoloLeveling),
-        (MAPPING_REGISTRY_WITH_DEFAULT, "Omniscient Reader", OmniscientReader),
-    ],
-)
-def test_register(register, name, expected) -> None:
-    assert name in register.registry
-    assert isinstance(register.registry[name](), expected)
-
-
-@pytest.mark.parametrize(
-    "register,name,expected",
-    [
-        (MAPPING_REGISTRY, "Solo Leveling", SoloLeveling),
-        (MAPPING_REGISTRY_WITH_DEFAULT, "Omniscient Reader", OmniscientReader),
-        (MAPPING_REGISTRY_WITH_DEFAULT, "Mashle", dict),
-    ],
-)
-def test_dispatch(register, name, expected) -> None:
-    actual = register.dispatch(name)()
-    assert isinstance(actual, expected)
-
-
-def test_raise_exception_register() -> None:
-    with pytest.raises(ValueError):
-
-        @MAPPING_REGISTRY.register("Solo Leveling")
-        class BeBeBe(Mapping):
-            pass
-
-
-def test_raise_exception_dispatch() -> None:
-    with pytest.raises(ValueError):
-        MAPPING_REGISTRY.dispatch("Mashle")
+    def test_raise_exception_dispatch(self) -> None:
+        with pytest.raises(ValueError):
+            self.registry.dispatch("Mashle")
