@@ -1,7 +1,8 @@
 from collections import Counter
-from src.Control_tests.control_test_1.task1 import *
 
 import pytest
+
+from src.Control_tests.control_test_1.task1 import *
 
 apple = Product("apple", 10.9, 4.99)
 banana = Product("banana", 15.89, 4.99)
