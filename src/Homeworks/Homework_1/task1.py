@@ -13,11 +13,12 @@ class Registry(Generic[I]):
 
     def register(self, name: str) -> Callable[[Type[I]], Type[I]]:
         def _decorator(cls: Type[I]) -> Type[I]:
+            if name in self.classes:
+                raise ValueError(f"The name {name} has already been registered")
+
             self.classes[name] = cls
             return cls
 
-        if name in self.classes:
-            raise ValueError(f"The name {name} has already been registered")
         return _decorator
 
     def dispatch(self, name: str) -> Type[I]:
