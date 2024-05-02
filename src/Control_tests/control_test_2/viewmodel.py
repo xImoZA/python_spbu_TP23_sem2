@@ -25,20 +25,23 @@ class MainViewModel:
         view.random_btn.config(command=lambda: self.loop.create_task(self.handle_random(view)))
 
     async def handle_best(self, view: MainView) -> None:
-        quotes = await self._model.get_best()
+        quotes = await self._model.parse_quotes("https://башорг.рф/byrating")
         view.text.config(state="normal")
+        view.text.delete("1.0", END)
         view.text.insert(END, ">>>\n" + ">>>\n".join(quotes))
         view.text.config(state="disabled")
 
     async def handle_new(self, view: MainView) -> None:
-        quotes = await self._model.get_new()
+        quotes = await self._model.parse_quotes("https://башорг.рф/")
         view.text.config(state="normal")
+        view.text.delete("1.0", END)
         view.text.insert(END, ">>>\n" + ">>>\n".join(quotes))
         view.text.config(state="disabled")
 
     async def handle_random(self, view: MainView) -> None:
-        quotes = await self._model.get_random()
+        quotes = await self._model.parse_quotes("https://башорг.рф/random")
         view.text.config(state="normal")
+        view.text.delete("1.0", END)
         view.text.insert(END, ">>>\n" + ">>>\n".join(quotes))
         view.text.config(state="disabled")
 
