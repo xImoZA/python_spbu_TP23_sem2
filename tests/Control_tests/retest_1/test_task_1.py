@@ -75,6 +75,14 @@ class TestUniversity:
         with pytest.raises(ValueError):
             uni._get_course("Algebra and Number Theory")
 
+    def test_get_total_hours_for_teacher(self) -> None:
+        assert uni.get_total_hours_for_teacher(t1.name) == 62
+        assert uni.get_total_hours_for_teacher(t2.name) == 32
+
+    def test_get_total_hours_for_student(self) -> None:
+        assert uni.get_total_hours_for_student(s1.name) == 62 + 32
+        assert uni.get_total_hours_for_student(s2.name) == 32
+
     def test_get_average_grade_student(self) -> None:
         assert uni.get_average_grade_student(s1.name) == 3
         assert uni.get_average_grade_student(s2.name) == 4

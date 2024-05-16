@@ -111,6 +111,14 @@ class University:
         student = self._get_student(name)
         return student.get_average_grade()
 
+    def get_total_hours_for_student(self, name: str) -> int:
+        student = self._get_student(name)
+        return student.get_total_hours()
+
+    def get_total_hours_for_teacher(self, name: str) -> int:
+        teacher = self._get_teacher(name)
+        return teacher.get_total_hours()
+
     def get_list_courses_student(self, name: str) -> list[Course]:
         student = self._get_student(name)
         return student.get_courses()
