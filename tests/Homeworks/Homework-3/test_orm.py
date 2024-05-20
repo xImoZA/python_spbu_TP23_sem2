@@ -40,7 +40,6 @@ class TestORM:
             "main": None,
             "visibility": int_arg,
             "wind": wind,
-            "clouds": None,
             "dt_txt": None,
         }
         assert big_orm.dump() == json.dumps(new_data)

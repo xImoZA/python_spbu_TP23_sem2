@@ -1,14 +1,14 @@
 import json
 from collections import Counter
 from dataclasses import asdict, dataclass
-from typing import Any, Generic, Type, TypeVar, get_args
+from typing import Any, Type, TypeVar, get_args
 
 from src.Homeworks.Homework_3.orm_error import AttributeJsonError
 
 T = TypeVar("T", bound="ORM")
 
 
-class Descr(Generic[T]):
+class Descr(object):
     def __init__(self, key: str) -> None:
         self.key: str = key
 

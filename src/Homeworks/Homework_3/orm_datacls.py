@@ -31,17 +31,11 @@ class Wind(ORM, metaclass=ORMMeta):
 
 
 @dataclass
-class Clouds(ORM, metaclass=ORMMeta):
-    all: int
-
-
-@dataclass
 class DayWeather(ORM, metaclass=ORMMeta):
     weather: list[Weather]
     main: MainWeather
     visibility: int
     wind: Wind
-    clouds: Clouds
     dt_txt: str
 
 
