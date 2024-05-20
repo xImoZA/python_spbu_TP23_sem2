@@ -19,7 +19,7 @@ class TestORM:
         main = {"temp": float_arg, "pressure": int_arg}
         weather = {"id": int_arg, "main": str_arg, "description": str_arg, "icon": str_arg}
         data = {"weather": [weather], "main": main, "visibility": int_arg}
-        big_orm = BigWeather.parse_json(data)
+        big_orm = DayWeather.parse_json(data)
         small_orm1 = MainWeather.parse_json(main)
         small_orm2 = Weather.parse_json(weather)
         assert big_orm.weather == [small_orm2] and big_orm.main == small_orm1
@@ -34,7 +34,7 @@ class TestORM:
         wind = {"speed": float_arg, "deg": int_arg, "gust": float_arg}
         weather = {"id": int_arg, "main": str_arg, "description": str_arg, "icon": str_arg}
         data = {"weather": [weather], "visibility": int_arg, "wind": wind}
-        big_orm = BigWeather.parse_json(data)
+        big_orm = DayWeather.parse_json(data)
         new_data = {
             "weather": [weather],
             "main": None,

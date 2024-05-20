@@ -4,8 +4,8 @@ from typing import Any
 import matplotlib.pyplot as plt
 import requests
 
-from src.Homeworks.Homework_3.orm_errors import CityNameError
 from src.Homeworks.Homework_3.data import *
+from src.Homeworks.Homework_3.orm_errors import CityNameError
 
 API_key = "5666f2a81657a6921ab4be376b1577ba"
 URL = "https://api.openweathermap.org/data/2.5/"
@@ -32,7 +32,7 @@ def show_plot_figure(indicator: str, date: list[str], ind: list[int | float]) ->
 
 def current_weather(city: str, attr: str) -> None:
     json = get_json(f"{URL}weather?q={city}&units=metric&appid={API_key}")
-    cur_weather = BigWeather.parse_json(json)
+    cur_weather = DayWeather.parse_json(json)
     if attr in ["temp", "feels_like", "pressure", "humidity"]:
         out_str = f"{attr}: {getattr(cur_weather.main, attr)}"
     else:
@@ -46,7 +46,7 @@ def current_weather(city: str, attr: str) -> None:
 
 def forecast_weather(city: str, attr: str, count: int) -> None:
     json = get_json(f"{URL}forecast?q={city}&units=metric&appid={API_key}")
-    forecast_weather = ForecastWeather.parse_json(json)
+    forecast_weather = FiveDayWeather.parse_json(json)
     data = []
     date = []
     for weather in forecast_weather.list[: count * 8 + 1]:

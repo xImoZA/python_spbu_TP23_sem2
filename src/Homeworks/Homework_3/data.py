@@ -36,7 +36,7 @@ class Clouds(ORM, metaclass=ORMMeta):
 
 
 @dataclass
-class BigWeather(ORM, metaclass=ORMMeta):
+class DayWeather(ORM, metaclass=ORMMeta):
     weather: list[Weather]
     main: MainWeather
     visibility: int
@@ -46,5 +46,5 @@ class BigWeather(ORM, metaclass=ORMMeta):
 
 
 @dataclass
-class ForecastWeather(ORM, metaclass=ORMMeta):
-    list: list[BigWeather]
+class FiveDayWeather(ORM, metaclass=ORMMeta):
+    list: list[DayWeather]
