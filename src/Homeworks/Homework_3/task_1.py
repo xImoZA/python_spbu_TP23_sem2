@@ -1,8 +1,9 @@
 from argparse import ArgumentParser
-from typing import Any, Optional
+from typing import Any
 
 import matplotlib.pyplot as plt
 import requests
+
 from src.Homeworks.Homework_3.exceptions import CityNameError
 from src.Homeworks.Homework_3.ORM_dataclasses import *
 
@@ -10,7 +11,7 @@ API_key = "5666f2a81657a6921ab4be376b1577ba"
 URL = "https://api.openweathermap.org/data/2.5/"
 
 
-def get_json(url: str) -> Optional[dict[str, Any]]:
+def get_json(url: str) -> dict[str, Any]:
     data = requests.get(url).json()
     if data.get("cod") == "404":
         raise CityNameError
@@ -29,7 +30,7 @@ def show_plot_figure(indicator: str, date: list[str], ind: list[int | float]) ->
     plt.show()
 
 
-def current_weather(city: str, attr: str):
+def current_weather(city: str, attr: str) -> None:
     json = get_json(f"{URL}weather?q={city}&units=metric&appid={API_key}")
     cur_weather = BigWeather.parse_json(json)
     if attr in ["temp", "feels_like", "pressure", "humidity"]:
@@ -43,7 +44,7 @@ def current_weather(city: str, attr: str):
     print(f"Weather in {city} now: {cur_weather.weather[0].description}, {out_str}")
 
 
-def forecast_weather(city: str, attr: str, count: int):
+def forecast_weather(city: str, attr: str, count: int) -> None:
     json = get_json(f"{URL}forecast?q={city}&units=metric&appid={API_key}")
     forecast_weather = ForecastWeather.parse_json(json)
     data = []
@@ -81,4 +82,3 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     main(args.city, args.command, args.parameter, args.period)
-

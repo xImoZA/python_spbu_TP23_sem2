@@ -3,7 +3,7 @@ from collections import Counter
 from dataclasses import asdict, dataclass
 from typing import Any, Generic, Type, TypeVar, get_args
 
-from src.Homeworks.Homework_3.exceptions import JsonError, DataclassAttributeError
+from src.Homeworks.Homework_3.exceptions import DataclassAttributeError, JsonError
 
 T = TypeVar("T", bound="ORM")
 
@@ -37,7 +37,7 @@ class ORMMeta(type):
 @dataclass
 class ORM:
     @classmethod
-    def parse_json(cls: Type[T], json_dict: dict, strict: bool = False) -> T:
+    def parse_json(cls: Type[T], json_dict: dict[str, Any], strict: bool = False) -> T:
         if strict:
             if Counter(json_dict.keys()) != Counter(cls.__annotations__):
                 raise DataclassAttributeError
