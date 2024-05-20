@@ -3,7 +3,7 @@ from collections import Counter
 from dataclasses import asdict, dataclass
 from typing import Any, Generic, Type, TypeVar, get_args
 
-from src.Homeworks.Homework_3.orm_errors import AttributeJsonError
+from src.Homeworks.Homework_3.orm_error import AttributeJsonError
 
 T = TypeVar("T", bound="ORM")
 
@@ -13,12 +13,12 @@ class Descr(Generic[T]):
         self.key: str = key
 
     def __get__(self, instance: T, owner: Type[T]) -> T:
-        if not hasattr(instance, "__json__"):
+        if not hasattr(instance, "json_dict"):
             raise AttributeJsonError
 
         value = instance.__dict__[self.key]
         if value is None:
-            setattr(instance, self.key, instance.__json__.get(self.key))
+            setattr(instance, self.key, instance.json_dict.get(self.key))
             return instance.__dict__[self.key]
         return value
 
@@ -45,7 +45,7 @@ class ORM:
             setattr(cls, attr, Descr(attr))
 
         new_cls = cls()
-        setattr(new_cls, "__json__", json_dict)
+        setattr(new_cls, "json_dict", json_dict)
 
         for name, small_data in json_dict.items():
             if isinstance(small_data, dict):

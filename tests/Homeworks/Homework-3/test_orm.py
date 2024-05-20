@@ -4,7 +4,7 @@ import hypothesis.strategies as st
 import pytest
 from hypothesis import given
 
-from src.Homeworks.Homework_3.orm_dtcls import *
+from src.Homeworks.Homework_3.orm_datacls import *
 
 
 class TestORM:

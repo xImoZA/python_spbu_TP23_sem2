@@ -4,8 +4,8 @@ from typing import Any
 import matplotlib.pyplot as plt
 import requests
 
-from src.Homeworks.Homework_3.orm_dtcls import *
-from src.Homeworks.Homework_3.orm_errors import CityNameError
+from src.Homeworks.Homework_3.orm_datacls import *
+from src.Homeworks.Homework_3.orm_error import CityNameError
 
 API_KEY = "5666f2a81657a6921ab4be376b1577ba"
 URL = "https://api.openweathermap.org/data/2.5/"
@@ -31,8 +31,8 @@ def show_plot_figure(indicator: str, date: list[str], ind: list[int | float]) ->
 
 
 def current_weather(city: str, attr: str) -> None:
-    json = get_json(f"{URL}weather?q={city}&units=metric&appid={API_KEY}")
-    cur_weather = DayWeather.parse_json(json)
+    json_dict = get_json(f"{URL}weather?q={city}&units=metric&appid={API_KEY}")
+    cur_weather = DayWeather.parse_json(json_dict)
     if attr in ["temp", "feels_like", "pressure", "humidity"]:
         out_str = f"{attr}: {getattr(cur_weather.main, attr)}"
     else:
@@ -45,8 +45,8 @@ def current_weather(city: str, attr: str) -> None:
 
 
 def forecast_weather(city: str, attr: str, count: int) -> None:
-    json = get_json(f"{URL}forecast?q={city}&units=metric&appid={API_KEY}")
-    forecast_5_days = FiveDayWeather.parse_json(json)
+    json_dict = get_json(f"{URL}forecast?q={city}&units=metric&appid={API_KEY}")
+    forecast_5_days = FiveDayWeather.parse_json(json_dict)
     data = []
     date = []
     for weather in forecast_5_days.list[: count * 8 + 1]:
