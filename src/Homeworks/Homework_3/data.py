@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from src.Homeworks.Homework_3.ORM import ORM, ORMMeta
+from src.Homeworks.Homework_3.orm import ORM, ORMMeta
 
 
 @dataclass
@@ -12,7 +12,7 @@ class Weather(ORM, metaclass=ORMMeta):
 
 
 @dataclass
-class Main(ORM, metaclass=ORMMeta):
+class MainWeather(ORM, metaclass=ORMMeta):
     temp: float
     feels_like: float
     temp_min: float
@@ -38,7 +38,7 @@ class Clouds(ORM, metaclass=ORMMeta):
 @dataclass
 class BigWeather(ORM, metaclass=ORMMeta):
     weather: list[Weather]
-    main: Main
+    main: MainWeather
     visibility: int
     wind: Wind
     clouds: Clouds

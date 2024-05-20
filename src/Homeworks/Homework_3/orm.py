@@ -3,12 +3,12 @@ from collections import Counter
 from dataclasses import asdict, dataclass
 from typing import Any, Generic, Type, TypeVar, get_args
 
-from src.Homeworks.Homework_3.exceptions import DataclassAttributeError, JsonError
+from src.Homeworks.Homework_3.orm_errors import JsonError
 
 T = TypeVar("T", bound="ORM")
 
 
-class ORMDescr(Generic[T]):
+class ORMDescriptor(Generic[T]):
     def __init__(self, key: str) -> None:
         self.key: str = key
 
@@ -40,9 +40,9 @@ class ORM:
     def parse_json(cls: Type[T], json_dict: dict[str, Any], strict: bool = False) -> T:
         if strict:
             if Counter(json_dict.keys()) != Counter(cls.__annotations__):
-                raise DataclassAttributeError
+                raise AttributeError("Dataclass does not match json")
         for attr in getattr(cls, "__annotations__"):
-            setattr(cls, attr, ORMDescr(attr))
+            setattr(cls, attr, ORMDescriptor(attr))
 
         new_cls = cls()
         setattr(new_cls, "__json__", json_dict)

@@ -4,8 +4,8 @@ from typing import Any
 import matplotlib.pyplot as plt
 import requests
 
-from src.Homeworks.Homework_3.exceptions import CityNameError
-from src.Homeworks.Homework_3.ORM_dataclasses import *
+from src.Homeworks.Homework_3.orm_errors import CityNameError
+from src.Homeworks.Homework_3.data import *
 
 API_key = "5666f2a81657a6921ab4be376b1577ba"
 URL = "https://api.openweathermap.org/data/2.5/"

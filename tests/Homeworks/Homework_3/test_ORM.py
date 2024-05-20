@@ -4,8 +4,7 @@ import hypothesis.strategies as st
 import pytest
 from hypothesis import given
 
-from src.Homeworks.Homework_3.exceptions import *
-from src.Homeworks.Homework_3.ORM_dataclasses import *
+from src.Homeworks.Homework_3.data import *
 
 
 class TestORM:
@@ -21,14 +20,14 @@ class TestORM:
         weather = {"id": int_arg, "main": str_arg, "description": str_arg, "icon": str_arg}
         data = {"weather": [weather], "main": main, "visibility": int_arg}
         big_orm = BigWeather.parse_json(data)
-        small_orm1 = Main.parse_json(main)
+        small_orm1 = MainWeather.parse_json(main)
         small_orm2 = Weather.parse_json(weather)
         assert big_orm.weather == [small_orm2] and big_orm.main == small_orm1
 
     def test_parse_json_errors(self) -> None:
         main = {"temp": 993.0, "pressure": 52}
-        with pytest.raises(DataclassAttributeError):
-            Main.parse_json(main, strict=True)
+        with pytest.raises(AttributeError):
+            MainWeather.parse_json(main, strict=True)
 
     @given(st.floats(), st.integers(), st.text())
     def test_dump_json(self, float_arg: float, int_arg: int, str_arg: str) -> None:
