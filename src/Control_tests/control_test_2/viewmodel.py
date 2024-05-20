@@ -1,7 +1,7 @@
 import asyncio
 from tkinter import END, Tk
 
-from model import *
+from model import ModelParser
 from view import MainView
 
 
