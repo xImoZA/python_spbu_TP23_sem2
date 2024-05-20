@@ -1,74 +1,96 @@
 import random
-from typing import Generic, Iterator, MutableMapping, Optional, Set, Tuple, TypeVar
+from typing import Any, Generic, Iterator, MutableMapping, Optional, Protocol, Tuple, TypeVar
+
+
+class Comparable(Protocol):
+    def __gt__(self, other: Any) -> bool:
+        ...
+
+    def __ge__(self, other: Any) -> bool:
+        ...
+
 
 V = TypeVar("V")
-K = TypeVar("K")
+K = TypeVar("K", bound=Comparable)
+
+
+class EmptyTreeError(Exception):
+    def __init__(self) -> None:
+        super().__init__(f"The Treap is empty")
 
 
 class Node(Generic[K, V]):
     def __init__(self, key: K, value: V) -> None:
-        self.key = key
-        self.value = value
+        self.key: K = key
+        self.value: V = value
         self.priority: float = random.random()
-        self.left: Optional[Node] = None
-        self.right: Optional[Node] = None
+        self.left: Optional[Node[K, V]] = None
+        self.right: Optional[Node[K, V]] = None
 
     def __iter__(self) -> Iterator[K]:
-        def iterate(root: Optional[Node], output: Set[K]) -> Set[K]:
-            if root is not None:
-                output.add(root.key)
-                output = iterate(root.left, output)
-                output = iterate(root.right, output)
+        if self.left:
+            yield from self.left
+        yield self.key
+        if self.right:
+            yield from self.right
 
-            return output
+    def __getitem__(self, key: K) -> V:
+        if self.key < key:
+            if self.right:
+                return self.right[key]
 
-        return iter(iterate(self, set()))
+            raise KeyError(f"The key {key} is not in the Node")
+
+        if self.key > key:
+            if self.left:
+                return self.left[key]
+
+            raise KeyError(f"The key {key} is not in the Node")
+
+        return self.value
 
     def __repr__(self) -> str:
-        if self:
-            return (
-                f"Node(key={self.key}, value={self.value}, priority={self.priority}, left={self.left.__repr__()}, "
-                f"right={self.right.__repr__()})"
-            )
-        return "None"
+        return (
+            f"Node(key={self.key}, value={self.value}, priority={self.priority}, left={repr(self.left)}, "
+            f"right={repr(self.right)})"
+        )
 
     def __str__(self) -> str:
-        if self:
-            return f"[<key={self.key}, value={self.value}>, left={self.left}, right={self.right}]"
-        return "None"
+        return f"[<key={self.key}, value={self.value}>, left={self.left}, right={self.right}]"
 
 
-class Treap(MutableMapping):
+class Treap(MutableMapping, Generic[K, V]):
     def __init__(self) -> None:
-        self.root: Optional[Node] = None
+        self.root: Optional[Node[K, V]] = None
         self.length: int = 0
 
     def __len__(self) -> int:
         return self.length
 
-    def __contains__(self, key: K) -> bool:
-        try:
-            self[key]
-            return True
-        except KeyError:
-            return False
+    @staticmethod
+    def comparison(key1: K, key2: K, key_in_right: bool) -> bool:
+        if key_in_right:
+            return key1 > key2
+        return key1 >= key2
 
     @staticmethod
-    def split_node(node: Optional[Node], key: K) -> Tuple[Optional[Node], Optional[Node]]:
+    def split_node(
+        node: Optional[Node[K, V]], key: K, key_in_left: bool = True
+    ) -> Tuple[Optional[Node[K, V]], Optional[Node[K, V]]]:
         if node is None:
             return None, None
 
-        if key > node.key:
-            node1, node2 = Treap.split_node(node.right, key)
+        if Treap.comparison(key, node.key, key_in_left):
+            node1, node2 = Treap.split_node(node.right, key, key_in_left)
             node.right = node1
             return node, node2
 
-        node1, node2 = Treap.split_node(node.left, key)
+        node1, node2 = Treap.split_node(node.left, key, key_in_left)
         node.left = node2
         return node1, node
 
     @staticmethod
-    def merge_node(left_node: Optional[Node], right_node: Optional[Node]) -> Optional[Node]:
+    def merge_node(left_node: Optional[Node[K, V]], right_node: Optional[Node[K, V]]) -> Optional[Node[K, V]]:
         if left_node is None:
             return right_node
 
@@ -83,72 +105,52 @@ class Treap(MutableMapping):
         return right_node
 
     def __setitem__(self, key: K, value: V) -> None:
-        node1, node2 = Treap.split_node(self.root, key)
-        try:
-            new_element: Optional[Node] = self[key]
-
-            if new_element:
-                new_element.value = value
+        if self.root is None:
+            self.root = Node(key, value)
+            self.length = 1
+        else:
+            if key in self:
                 del self[key]
 
-        except KeyError:
-            new_element = Node(key, value)
-
-        self.root = Treap.merge_node(Treap.merge_node(node1, new_element), node2)
-        self.length += 1
+            node1, node2 = Treap.split_node(self.root, key)
+            if node1 and key > node1.key:
+                node1 = Treap.merge_node(node1, Node(key, value))
+            else:
+                node1 = Treap.merge_node(Node(key, value), node1)
+            self.root = Treap.merge_node(node1, node2)
+            self.length += 1
 
     def __delitem__(self, key: K) -> None:
-        node1, node2 = Treap.split_node(self.root, key)
+        node1, sml_node = Treap.split_node(self.root, key)
+        key_node, node2 = Treap.split_node(sml_node, key, key_in_left=False)
 
-        def recursion(node: Optional[Node]) -> Optional[Node]:
-            if node and node.left:
-                node.left = recursion(node.left)
-                return node
-
-            if node and node.key == key:
-                return_node = node.right
-                del node
-                return return_node
-
+        if key_node is None:
             raise KeyError(f"The key {key} is not in the Treap")
-
-        node2 = recursion(node2)
-
         self.root = Treap.merge_node(node1, node2)
         self.length -= 1
 
-    @staticmethod
-    def get_item(root: Optional[Node], key: K) -> Node:
-        if root is not None:
-            if root.key < key:
-                return Treap.get_item(root.right, key)
-
-            if root.key > key:
-                return Treap.get_item(root.left, key)
-
-            return root
-
-        raise KeyError(f"The key {key} is not in the Treap")
-
-    def __getitem__(self, key: K) -> Optional[V]:
+    def __getitem__(self, key: K) -> V:
         try:
-            return Treap.get_item(self.root, key).value
+            if self.root:
+                return self.root[key]
+            else:
+                raise EmptyTreeError
         except KeyError:
             raise KeyError(f"The key {key} is not in the Treap")
 
     def __iter__(self) -> Iterator[K]:
         if self.root:
-            return self.root.__iter__()
-        raise KeyError(f"The Treap is empty")
+            return iter(self.root)
+        raise EmptyTreeError
 
     def __repr__(self) -> str:
         if self.root:
             return (
                 f"Treap(length={self.length}, root=Node(key={self.root.key}, value={self.root.value}, priority={self.root.priority}), "
-                f"left={self.root.left.__repr__()}, right={self.root.right.__repr__()})"
+                f"left={repr(self.root.left)}, right={repr(self.root.right)})"
             )
 
         return f"Treap(length=0, root=None, left=None, right=None)"
 
     def __str__(self) -> str:
-        return self.root.__str__()
+        return str(self.root)
