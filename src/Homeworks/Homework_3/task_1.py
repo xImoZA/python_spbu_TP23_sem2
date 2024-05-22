@@ -70,11 +70,14 @@ def main(city: str, command: str, ind: str, days: int) -> None:
 
 if __name__ == "__main__":
     parser = ArgumentParser()
-    parser.add_argument("city", type=str, help="City name")
-    parser.add_argument("com", type=str, help="Command", choices=["current_weather", "forecast_weather"])
+    parser.add_argument("---city", type=str, default="Saint Petersburg", help="City name")
     parser.add_argument(
-        "arg",
+        "---com", type=str, default="current_weather", help="Command", choices=["current_weather", "forecast_weather"]
+    )
+    parser.add_argument(
+        "---arg",
         type=str,
+        default="temp",
         help="Parameter",
         choices=["temp", "feels_like", "pressure", "humidity", "wind_speed", "gust"],
     )

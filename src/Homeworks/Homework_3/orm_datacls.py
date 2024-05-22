@@ -1,10 +1,10 @@
 from dataclasses import dataclass
 
-from src.Homeworks.Homework_3.orm import ORM, ORMMeta
+from src.Homeworks.Homework_3.orm import ORM
 
 
 @dataclass
-class Weather(ORM, metaclass=ORMMeta):
+class Weather(ORM):
     id: int
     main: str
     description: str
@@ -12,7 +12,7 @@ class Weather(ORM, metaclass=ORMMeta):
 
 
 @dataclass
-class MainWeather(ORM, metaclass=ORMMeta):
+class MainWeather(ORM):
     temp: float
     feels_like: float
     temp_min: float
@@ -24,14 +24,14 @@ class MainWeather(ORM, metaclass=ORMMeta):
 
 
 @dataclass
-class Wind(ORM, metaclass=ORMMeta):
+class Wind(ORM):
     speed: float
     deg: int
     gust: float
 
 
 @dataclass
-class DayWeather(ORM, metaclass=ORMMeta):
+class DayWeather(ORM):
     weather: list[Weather]
     main: MainWeather
     visibility: int
@@ -40,5 +40,5 @@ class DayWeather(ORM, metaclass=ORMMeta):
 
 
 @dataclass
-class FiveDayWeather(ORM, metaclass=ORMMeta):
+class FiveDayWeather(ORM):
     list: list[DayWeather]

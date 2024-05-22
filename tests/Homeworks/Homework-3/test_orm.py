@@ -5,6 +5,7 @@ import pytest
 from hypothesis import given
 
 from src.Homeworks.Homework_3.orm_datacls import DayWeather, MainWeather, Weather, Wind
+from src.Homeworks.Homework_3.orm_error import JsonError, ORMError
 
 
 class TestORM:
@@ -24,9 +25,13 @@ class TestORM:
         small_orm2 = Weather.parse_json(weather)
         assert big_orm.weather == [small_orm2] and big_orm.main == small_orm1
 
+    def test_get_errors(self) -> None:
+        with pytest.raises(JsonError):
+            Wind("", "", "").deg
+
     def test_parse_json_errors(self) -> None:
         main = {"temp": 993.0, "pressure": 52}
-        with pytest.raises(AttributeError):
+        with pytest.raises(JsonError):
             MainWeather.parse_json(main, strict=True)
 
     @given(st.floats(), st.integers(), st.text())
@@ -42,4 +47,4 @@ class TestORM:
             "wind": wind,
             "dt_txt": None,
         }
-        assert big_orm.dump() == json.dumps(new_data)
+        assert big_orm.dump_json() == json.dumps(new_data)
