@@ -1,5 +1,9 @@
 from typing import MutableSequence, Optional
 
+from src.Homeworks.Homework_1.task1 import Registry
+
+REGISTRY = Registry["Action"]()
+
 
 class Action:
     def forward_action(self, user_list: MutableSequence[int]) -> None:
@@ -26,6 +30,7 @@ class PerformedCommandStorage:
         last_action.reverse_action(self.collection)
 
 
+@REGISTRY.register("AddToStart")
 class AddToStart(Action):
     def __init__(self, value: int) -> None:
         self.value: int = value
@@ -37,6 +42,7 @@ class AddToStart(Action):
         user_list.pop(0)
 
 
+@REGISTRY.register("DeleteFromStart")
 class DeleteFromStart(Action):
     def __init__(self) -> None:
         self.deleted_object: Optional[int] = None
@@ -54,6 +60,7 @@ class DeleteFromStart(Action):
             raise IndexError("The undo action has not been performed")
 
 
+@REGISTRY.register("AddToEnd")
 class AddToEnd(Action):
     def __init__(self, value: int):
         self.value: int = value
@@ -65,6 +72,7 @@ class AddToEnd(Action):
         user_list.pop()
 
 
+@REGISTRY.register("DeleteFromEnd")
 class DeleteFromEnd(Action):
     def __init__(self) -> None:
         self.deleted_object: Optional[int] = None
@@ -82,6 +90,7 @@ class DeleteFromEnd(Action):
             raise IndexError("The undo action has not been performed")
 
 
+@REGISTRY.register("AdditionValue")
 class AdditionValue(Action):
     def __init__(self, i: int, value: int):
         self.i: int = i
@@ -97,6 +106,7 @@ class AdditionValue(Action):
         user_list[self.i] -= self.value
 
 
+@REGISTRY.register("SubtractingValue")
 class SubtractingValue(Action):
     def __init__(self, i: int, value: int):
         self.i: int = i
@@ -112,6 +122,7 @@ class SubtractingValue(Action):
         user_list[self.i] += self.value
 
 
+@REGISTRY.register("InsertValue")
 class InsertValue(Action):
     def __init__(self, i: int, value: int):
         self.i: int = i
@@ -130,6 +141,7 @@ class InsertValue(Action):
             user_list.pop(self.i)
 
 
+@REGISTRY.register("DeleteValue")
 class DeleteValue(Action):
     def __init__(self, i: int):
         self.i: int = i
@@ -153,6 +165,7 @@ class DeleteValue(Action):
             raise IndexError("The undo action has not been performed")
 
 
+@REGISTRY.register("Move")
 class Move(Action):
     def __init__(self, i: int, j: int):
         self.i: int = i
@@ -177,6 +190,7 @@ class Move(Action):
             user_list.insert(max(self.i, self.j), user_list.pop(min(self.i, self.j) + 1))
 
 
+@REGISTRY.register("Reverse")
 class Reverse(Action):
     def forward_action(self, user_list: MutableSequence[int]) -> None:
         user_list.reverse()
@@ -185,6 +199,7 @@ class Reverse(Action):
         user_list.reverse()
 
 
+@REGISTRY.register("Clear")
 class Clear(Action):
     def __init__(self) -> None:
         self.deleted_collection: Optional[MutableSequence[int]] = None

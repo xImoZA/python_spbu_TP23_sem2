@@ -1,6 +1,5 @@
 from typing import Tuple
 
-from src.Homeworks.Homework_1.task1 import Registry
 from src.Homeworks.Homework_2.PerformedCommandStorage import *
 
 AVAILABLE_COMMANDS = (
@@ -20,10 +19,6 @@ AVAILABLE_COMMANDS = (
     "\t Show (Print collection)\n"
     "\t Exit (End the program)"
 )
-
-REGISTRY = Registry[Action]()
-for action in Action.__subclasses__():
-    REGISTRY.register(action.__name__)(action)
 
 
 def create_storage() -> PerformedCommandStorage:
