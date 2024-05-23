@@ -67,7 +67,7 @@ class Model:
                     if len(result) <= len(min_result):
                         min_result = result
 
-        if result[0] == "":
+        if result == [""] * self.depth:
             print(f"There is no path with such the {self.depth} length")
         else:
-            print(f"The shortest way: {' -> '.join(result)}")
+            print(f"The shortest way: {[result]}")
