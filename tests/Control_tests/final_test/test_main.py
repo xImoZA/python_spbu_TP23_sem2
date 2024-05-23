@@ -10,4 +10,7 @@ def test_get_links():
 def test_get_path():
     start_url = Node("https://en.wikipedia.org/wiki/Axiom_of_choice", None)
     end_url = Node("http://en.wikipedia.org/wiki/Adolf_Hitler", start_url)
-    assert get_path(end_url) == ["https://en.wikipedia.org/wiki/Axiom_of_choice", "http://en.wikipedia.org/wiki/Adolf_Hitler"]
+    assert get_path(end_url) == [
+        "https://en.wikipedia.org/wiki/Axiom_of_choice",
+        "http://en.wikipedia.org/wiki/Adolf_Hitler",
+    ]
