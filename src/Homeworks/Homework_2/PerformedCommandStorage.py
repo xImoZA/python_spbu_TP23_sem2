@@ -1,3 +1,4 @@
+import abc
 from typing import MutableSequence, Optional
 
 from src.Homeworks.Homework_1.task1 import Registry
@@ -5,10 +6,12 @@ from src.Homeworks.Homework_1.task1 import Registry
 REGISTRY = Registry["Action"]()
 
 
-class Action:
+class Action(metaclass=abc.ABCMeta):
+    @abc.abstractmethod
     def forward_action(self, user_list: MutableSequence[int]) -> None:
         raise NotImplementedError()
 
+    @abc.abstractmethod
     def reverse_action(self, user_list: MutableSequence[int]) -> None:
         raise NotImplementedError()
 

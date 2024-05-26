@@ -2,23 +2,7 @@ from typing import Tuple
 
 from src.Homeworks.Homework_2.PerformedCommandStorage import *
 
-AVAILABLE_COMMANDS = (
-    "Available commands:\n"
-    "\t AddToStart --value (Insert value to the beginning of the collection)\n"
-    "\t DeleteFromStart (Deleted value from the beginning of the collection)\n"
-    "\t AddToEnd --value (Insert value at the end of the collection)\n"
-    "\t DeleteFromEnd (Deleted value from the end of the collection)\n"
-    "\t AdditionValue --index --value (Adding the index value of the collection and your value)\n"
-    "\t SubtractingValue --index --value (Subtracting the index value of the collection and your value)\n"
-    "\t InsertValue --index --value (Insert value by index of the collection)\n"
-    "\t DeleteValue --index --value (Deleted value by index of the collection)\n"
-    "\t Move --first_index --second_index (Swap values from these indexes of the collections)\n"
-    "\t Reverse (Reverse the collection)\n"
-    "\t Clear (Clear the collection)\n"
-    "\t Undo (Undo last action)\n"
-    "\t Show (Print collection)\n"
-    "\t Exit (End the program)"
-)
+AVAILABLE_COMMANDS = "Available commands:\n\t " + "\n\t ".join(REGISTRY.classes.keys()) + "\n\t Undo\n\t Show\n\t Exit"
 
 
 def create_storage() -> PerformedCommandStorage:
