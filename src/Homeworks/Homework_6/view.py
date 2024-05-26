@@ -1,11 +1,12 @@
 from tkinter import PhotoImage, ttk
+from typing import Any
 
 
 class MainView(ttk.Frame):
     GREETINGS = 'Welcome to the "TicTacToe"!'
     CHOOSE_MODE = "Select a mode:"
 
-    def __init__(self, *args, **kwargs) -> None:
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
 
         self.grid_rowconfigure(0, weight=1)
@@ -30,7 +31,7 @@ class MainView(ttk.Frame):
 class SideView(ttk.Frame):
     CHOOSE_SIDE = "Choose a side:"
 
-    def __init__(self, *args, **kwargs) -> None:
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
 
         self.grid_rowconfigure(0, weight=1)
@@ -48,7 +49,7 @@ class SideView(ttk.Frame):
 
 
 class FieldView(ttk.Frame):
-    def __init__(self, *args, **kwargs) -> None:
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
 
         self.grid_rowconfigure(0, weight=1)
@@ -65,7 +66,7 @@ class FieldView(ttk.Frame):
 
 
 class FinalView(ttk.Frame):
-    def __init__(self, *args, **kwargs) -> None:
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.grid_rowconfigure(0, weight=1)
         self.grid_rowconfigure(1, weight=4)

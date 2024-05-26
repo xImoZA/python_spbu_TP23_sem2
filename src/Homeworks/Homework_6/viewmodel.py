@@ -32,7 +32,7 @@ class ViewModel:
         self._session_callback_rm = model.add_session_listener(self._session_observer)
         self._current_view: Optional[ttk.Frame] = None
 
-    def _session_observer(self, mode: Mode):
+    def _session_observer(self, mode: Mode) -> None:
         if mode.name == "final":
             self.switch("final", mode.players)
         elif mode.name == "side":
@@ -40,7 +40,7 @@ class ViewModel:
         else:
             self.switch("field", mode.players)
 
-    def switch(self, name: str, data: dict):
+    def switch(self, name: str, data: dict) -> None:
         if name not in self._viewmodels:
             raise RuntimeError(f"Unknown view to switch: {name}")
 
@@ -50,7 +50,7 @@ class ViewModel:
         self._current_view = self._viewmodels[name].start(self._root, data)
         self._current_view.grid(row=0, column=0, sticky="NSEW")
 
-    def start(self):
+    def start(self) -> None:
         self.switch("main", {})
 
 
@@ -69,18 +69,18 @@ class MainViewModel(IViewModel):
     def smart_bot(self) -> None:
         self._model.choose_mod("side", {"player1": Player("You", "", []), "player2": SmartBot("Bot", "", [])})
 
-    def start(self, root: Tk, data: dict):
+    def start(self, root: Tk, data: dict) -> ttk.Frame:
         frame = MainView(root)
         self._bind(frame)
         return frame
 
 
 class SideViewModel(IViewModel):
-    def _bind(self, view: SideView, data: dict):
+    def _bind(self, view: SideView, data: dict) -> None:
         view.tic_btn.config(command=lambda: self.choose_side(1, data))
         view.tac_btn.config(command=lambda: self.choose_side(0, data))
 
-    def choose_side(self, tictac: int, data: dict):
+    def choose_side(self, tictac: int, data: dict) -> None:
         pl1: Player = data["player1"]
         pl2: Player = data["player2"]
 
@@ -97,14 +97,14 @@ class SideViewModel(IViewModel):
         else:
             self._model.choose_mod("smart_bot", new_data)
 
-    def start(self, root: Tk, data: dict):
+    def start(self, root: Tk, data: dict) -> ttk.Frame:
         frame = SideView(root)
         self._bind(frame, data)
         return frame
 
 
 class FieldViewModel(IViewModel):
-    def _bind(self, view: FieldView, data: dict):
+    def _bind(self, view: FieldView, data: dict) -> None:
         pl1: Player = data["player1"]
         pl2: Player = data["player2"]
         self._players: list[Player] = [pl1, pl2]
@@ -138,7 +138,7 @@ class FieldViewModel(IViewModel):
         except TicTacToeException:
             pass
 
-    def start(self, root: Tk, data: dict):
+    def start(self, root: Tk, data: dict) -> ttk.Frame:
         frame = FieldView(root)
         frame.grid(row=0, column=0, sticky="NSEW")
         self._bind(frame, data)
@@ -146,15 +146,13 @@ class FieldViewModel(IViewModel):
 
 
 class FinalViewModel(IViewModel):
-    def start(self, root: Tk, data: dict):
+    def start(self, root: Tk, data: dict) -> ttk.Frame:
         frame = FinalView(root)
         frame.grid(row=0, column=0, sticky="NSEW")
         pl1: Optional[Player] = data.get("win")
 
         if pl1:
             frame.header.config(text=f"Win {pl1.name}")
-            frame.win.pack()
         else:
             frame.header.config(text=f"Draw")
-            frame.lose.pack()
         return frame
