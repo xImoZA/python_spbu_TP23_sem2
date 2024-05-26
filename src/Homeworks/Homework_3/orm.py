@@ -1,5 +1,4 @@
 import json
-from collections import Counter
 from dataclasses import asdict, dataclass
 from typing import Any, Optional, Type, TypeVar, get_args
 
@@ -39,8 +38,7 @@ class ORMDescriptor(object):
             else:
                 setattr(instance, self.key, data)
                 return instance.__dict__[self.key]
-        else:
-            return value
+        return None
 
     def __set__(self, instance: T, value: Any) -> None:
         instance.__dict__[self.key] = value
@@ -51,7 +49,7 @@ class ORM:
     @classmethod
     def parse_json(cls: Type[T], json_dict: dict[str, Any], strict: bool = False) -> T:
         if strict:
-            if Counter(json_dict.keys()) != Counter(cls.__annotations__.keys()):
+            if set(json_dict.keys()) != set(cls.__annotations__.keys()):
                 raise JsonError("Dataclass does not match json")
 
         for name in cls.__annotations__.keys():
