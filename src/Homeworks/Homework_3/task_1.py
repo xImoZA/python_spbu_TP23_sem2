@@ -1,3 +1,4 @@
+import os
 from argparse import ArgumentParser
 from typing import Any
 
@@ -7,7 +8,7 @@ import requests
 from src.Homeworks.Homework_3.orm_datacls import *
 from src.Homeworks.Homework_3.orm_error import CityNameError
 
-API_KEY = "5666f2a81657a6921ab4be376b1577ba"
+API_KEY = os.getenv("OPENWEATHERMAP_API_KAY")
 URL = "https://api.openweathermap.org/data/2.5/"
 
 
