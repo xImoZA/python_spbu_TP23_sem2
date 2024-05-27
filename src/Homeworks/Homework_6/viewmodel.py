@@ -135,7 +135,7 @@ class FieldViewModel(IViewModel):
 
             return destroy
 
-        view.destroy = _destroy_wrapper(view.destroy)
+        setattr(view, "destroy", _destroy_wrapper(view.destroy))
 
     def make_move(self, num_cage: Optional[int]) -> None:
         try:
