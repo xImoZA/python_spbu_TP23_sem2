@@ -1,7 +1,7 @@
 import abc
 from random import randint
 from tkinter import Tk, ttk
-from typing import Optional
+from typing import Callable, Optional
 
 from model import Bot, Mode, Player, SmartBot, StupidBot, TicTacToeException, TicTacToeModel
 from observer import Observable
@@ -113,18 +113,29 @@ class FieldViewModel(IViewModel):
         if isinstance(self._now_player.value, Player):
             view.header.config(text=f"{self._now_player.value.name} is get move now")
 
-        label_observer = self._now_player.add_callback(
+        label_observer_rm = self._now_player.add_callback(
             lambda player: view.header.config(text=f"{player.name} is get move now")
         )
-
+        cages_observer_rm = []
         for i in range(9):
             view.__dict__[f"btn_{i}"].config(command=lambda num_cage=i: self.make_move(num_cage))
-            cage_observer = self._model.cages[i].add_callback(
-                lambda cage: view.__dict__[f"btn_{cage.num}"].config(text=cage.side)
+            cages_observer_rm.append(
+                self._model.cages[i].add_callback(lambda cage: view.__dict__[f"btn_{cage.num}"].config(text=cage.side))
             )
 
         if isinstance(self._now_player.value, Bot):
             self.make_move(self._now_player.value.make_bot_move(self._model.free_cages))
+
+        def _destroy_wrapper(original_destroy: Callable) -> Callable:
+            def destroy() -> None:
+                original_destroy()
+                label_observer_rm()
+                for observer_rm in cages_observer_rm:
+                    observer_rm()
+
+            return destroy
+
+        view.destroy = _destroy_wrapper(view.destroy)
 
     def make_move(self, num_cage: Optional[int]) -> None:
         try:
