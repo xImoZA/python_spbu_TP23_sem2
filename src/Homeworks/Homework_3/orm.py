@@ -25,7 +25,7 @@ class ORMDescriptor(object):
         elif value is None and self.key in instance.__json__.keys():
             data = instance.__json__[self.key]
 
-            if isinstance(data, dict):
+            if isinstance(data, dict) and issubclass(instance.__annotations__[self.key], ORM):
                 setattr(instance, self.key, instance.__annotations__[self.key].parse_json(data))
                 return instance.__dict__[self.key]
 

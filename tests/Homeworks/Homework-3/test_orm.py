@@ -1,4 +1,5 @@
 import json
+from dataclasses import dataclass
 
 import hypothesis.strategies as st
 import pytest
@@ -7,6 +8,12 @@ from hypothesis import given
 from src.Homeworks.Homework_3.orm import ORM
 from src.Homeworks.Homework_3.orm_datacls import DayWeather, MainWeather, Weather, Wind
 from src.Homeworks.Homework_3.orm_error import JsonError
+
+
+@dataclass
+class NewDayWeather(ORM):
+    main: MainWeather
+    main_dict: dict
 
 
 class TestORM:
@@ -40,6 +47,18 @@ class TestORM:
             isinstance(big_orm.main, ORM)
             and big_orm.main == small_orm1
             and list(big_orm.main.__dict__.keys()) == final_dict1
+        )
+
+    @given(st.floats(min_value=0), st.integers())
+    def test_get_subcls_items(self, float_arg: float, int_arg: int) -> None:
+        main_weather = {"temp": float_arg, "pressure": int_arg}
+        data = {"main": main_weather, "main_dict": main_weather}
+        big_orm = NewDayWeather.parse_json(data)
+        assert isinstance(big_orm.main, ORM) and isinstance(big_orm.main_dict, dict)
+        assert (
+            big_orm.main.temp == main_weather["temp"]
+            and big_orm.main.pressure == main_weather["pressure"]
+            and big_orm.main_dict == main_weather
         )
 
     def test_get_errors(self) -> None:
