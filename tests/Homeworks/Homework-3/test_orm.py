@@ -4,8 +4,9 @@ import hypothesis.strategies as st
 import pytest
 from hypothesis import given
 
+from src.Homeworks.Homework_3.orm import ORM
 from src.Homeworks.Homework_3.orm_datacls import DayWeather, MainWeather, Weather, Wind
-from src.Homeworks.Homework_3.orm_error import JsonError, ORMError
+from src.Homeworks.Homework_3.orm_error import JsonError
 
 
 class TestORM:
@@ -23,7 +24,23 @@ class TestORM:
         big_orm = DayWeather.parse_json(data)
         small_orm1 = MainWeather.parse_json(main_weather)
         small_orm2 = Weather.parse_json(weather)
-        assert big_orm.weather == [small_orm2] and big_orm.main == small_orm1
+
+        final_dict2 = list(Weather.__dict__["__annotations__"].keys())
+        final_dict2.append("__json__")
+        assert (
+            isinstance(big_orm.weather, list)
+            and isinstance(big_orm.weather[0], ORM)
+            and big_orm.weather[0] == small_orm2
+            and list(big_orm.weather[0].__dict__.keys()) == final_dict2
+        )
+
+        final_dict1 = list(MainWeather.__dict__["__annotations__"].keys())
+        final_dict1.append("__json__")
+        assert (
+            isinstance(big_orm.main, ORM)
+            and big_orm.main == small_orm1
+            and list(big_orm.main.__dict__.keys()) == final_dict1
+        )
 
     def test_get_errors(self) -> None:
         with pytest.raises(JsonError):
