@@ -5,7 +5,7 @@ from typing import Callable, Optional
 
 from src.Homeworks.Homework_6.model import Bot, Mode, Player, SmartBot, StupidBot, TicTacToeException, TicTacToeModel
 from src.Homeworks.Homework_6.observer import Observable
-from src.Homeworks.Homework_6.view import FieldView, FinalView, MainView, SideView
+from src.Homeworks.Homework_6.view import FieldView, FinalView, MainView, SideView, MultiplayerView
 
 
 class IViewModel(metaclass=abc.ABCMeta):
@@ -24,6 +24,7 @@ class ViewModel:
 
         self._viewmodels: dict[str, IViewModel] = {
             "main": MainViewModel(self._model),
+            "multiplayer": MultiplayerViewModel(self._model),
             "side": SideViewModel(self._model),
             "field": FieldViewModel(self._model),
             "final": FinalViewModel(self._model),
@@ -35,6 +36,8 @@ class ViewModel:
     def _session_observer(self, mode: Mode) -> None:
         if mode.name == "final":
             self.switch("final", mode.players)
+        elif mode.name == "multiplayer":
+            self.switch("multiplayer", mode.players)
         elif mode.name == "side":
             self.switch("side", mode.players)
         else:
@@ -59,6 +62,7 @@ class MainViewModel(IViewModel):
         view.yourself_btn.config(command=lambda: self.play_by_self())
         view.easy_btn.config(command=lambda: self.stupid_bot())
         view.hard_btn.config(command=lambda: self.smart_bot())
+        view.multiplayer_btn.config(command=lambda : self.multiplayer())
 
     def play_by_self(self) -> None:
         self._model.choose_mod("play_by_self", {"player1": Player("1", "O", []), "player2": Player("2", "X", [])})
@@ -69,8 +73,23 @@ class MainViewModel(IViewModel):
     def smart_bot(self) -> None:
         self._model.choose_mod("side", {"player1": Player("You", "", []), "player2": SmartBot("Bot", "", [])})
 
+    def multiplayer(self) -> None:
+        self._model.choose_mod("multiplayer", {})
+
     def start(self, root: Tk, data: dict) -> ttk.Frame:
         frame = MainView(root)
+        self._bind(frame)
+        return frame
+
+
+class MultiplayerViewModel(IViewModel):
+    def _bind(self, view: MultiplayerView) -> None:
+        view.label.pack()
+        view.ip_entry.pack()
+        view.enter_btn.pack()
+
+    def start(self, root: Tk, data: dict) -> ttk.Frame:
+        frame = MultiplayerView(root)
         self._bind(frame)
         return frame
 

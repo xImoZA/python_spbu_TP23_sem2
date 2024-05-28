@@ -12,13 +12,13 @@ class MainView(ttk.Frame):
         self.grid_rowconfigure(0, weight=1)
         self.grid_rowconfigure(1, weight=1)
         self.grid_rowconfigure(2, weight=60)
-        for i in range(3):
+        for i in range(4):
             self.grid_columnconfigure(i, weight=1)
 
         self.header1 = ttk.Label(self, text=self.GREETINGS)
-        self.header1.grid(row=0, column=0, columnspan=3, padx=10, pady=10)
+        self.header1.grid(row=0, column=0, columnspan=4, padx=10, pady=10)
         self.header2 = ttk.Label(self, text=self.CHOOSE_MODE)
-        self.header2.grid(row=1, column=0, columnspan=3, padx=10, pady=10)
+        self.header2.grid(row=1, column=0, columnspan=4, padx=10, pady=10)
 
         self.yourself_btn = ttk.Button(self, text="By self")
         self.yourself_btn.grid(row=2, column=0, sticky="NSEW")
@@ -26,6 +26,16 @@ class MainView(ttk.Frame):
         self.easy_btn.grid(row=2, column=1, sticky="NSEW")
         self.hard_btn = ttk.Button(self, text="Hard bot mod")
         self.hard_btn.grid(row=2, column=2, sticky="NSEW")
+        self.multiplayer_btn = ttk.Button(self, text="Multiplayer")
+        self.multiplayer_btn.grid(row=2, column=3, sticky="NSEW")
+
+
+class MultiplayerView(ttk.Frame):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.label = ttk.Label(self, text="Enter ip of server:")
+        self.ip_entry = ttk.Entry(self)
+        self.enter_btn = ttk.Button(self, text="Enter")
 
 
 class SideView(ttk.Frame):
@@ -73,4 +83,4 @@ class FinalView(ttk.Frame):
         self.grid_columnconfigure(0, weight=10)
 
         self.header = ttk.Label(self)
-        self.header.grid(row=0, column=0, padx=10, pady=10, sticky="NSEW")
+        self.header.grid(row=0, column=0)
