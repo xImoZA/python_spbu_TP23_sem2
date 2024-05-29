@@ -5,9 +5,9 @@ from threading import Thread
 from tkinter import Tk, ttk
 from typing import Callable, Optional
 
-from model import Bot, Mode, Player, SmartBot, StupidBot, TicTacToeException, TicTacToeModel
-from observer import Observable
-from view import FieldView, FinalView, MainView, MultiplayerView, SideView
+from src.Homeworks.Homework_6.model import Bot, Mode, Player, SmartBot, StupidBot, TicTacToeException, TicTacToeModel
+from src.Homeworks.Homework_6.observer import Observable
+from src.Homeworks.Homework_6.view import FieldView, FinalView, MainView, MultiplayerView, SideView
 
 
 class IViewModel(metaclass=abc.ABCMeta):
