@@ -21,7 +21,7 @@ class TestORM:
     def test_parse_json(self, speed: float, deg: int, gust: float) -> None:
         data = {"speed": speed, "deg": deg, "gust": gust}
         current_orm = Wind.parse_json(data)
-        assert [getattr(current_orm, i) for i in data.keys()] == [speed, deg, gust]
+        assert [getattr(current_orm, i) for i in data.keys()] == [speed, deg, gust] and isinstance(current_orm, Wind)
 
     @given(st.floats(), st.integers(), st.text())
     def test_parse_json_with_subcls_and_list(self, float_arg: float, int_arg: int, str_arg: str) -> None:
@@ -35,8 +35,9 @@ class TestORM:
         final_dict2 = list(Weather.__dict__["__annotations__"].keys())
         final_dict2.append("__json__")
         assert (
-            isinstance(big_orm.weather, list)
-            and isinstance(big_orm.weather[0], ORM)
+            isinstance(big_orm, DayWeather)
+            and isinstance(big_orm.weather, list)
+            and isinstance(big_orm.weather[0], Weather)
             and big_orm.weather[0] == small_orm2
             and list(big_orm.weather[0].__dict__.keys()) == final_dict2
         )
@@ -44,7 +45,7 @@ class TestORM:
         final_dict1 = list(MainWeather.__dict__["__annotations__"].keys())
         final_dict1.append("__json__")
         assert (
-            isinstance(big_orm.main, ORM)
+            isinstance(big_orm.main, MainWeather)
             and big_orm.main == small_orm1
             and list(big_orm.main.__dict__.keys()) == final_dict1
         )
@@ -54,7 +55,11 @@ class TestORM:
         main_weather = {"temp": float_arg, "pressure": int_arg}
         data = {"main": main_weather, "main_dict": main_weather}
         big_orm = NewDayWeather.parse_json(data)
-        assert isinstance(big_orm.main, ORM) and isinstance(big_orm.main_dict, dict)
+        assert (
+            isinstance(big_orm, NewDayWeather)
+            and isinstance(big_orm.main, MainWeather)
+            and isinstance(big_orm.main_dict, dict)
+        )
         assert (
             big_orm.main.temp == main_weather["temp"]
             and big_orm.main.pressure == main_weather["pressure"]
