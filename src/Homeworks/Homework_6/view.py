@@ -1,4 +1,4 @@
-from tkinter import PhotoImage, ttk
+from tkinter import ttk
 from typing import Any
 
 
@@ -73,4 +73,4 @@ class FinalView(ttk.Frame):
         self.grid_columnconfigure(0, weight=10)
 
         self.header = ttk.Label(self)
-        self.header.grid(row=0, column=0, padx=10, pady=10, sticky="NSEW")
+        self.header.grid(row=0, column=0)
