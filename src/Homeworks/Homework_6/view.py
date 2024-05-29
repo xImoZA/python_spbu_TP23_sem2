@@ -1,4 +1,4 @@
-from tkinter import PhotoImage, ttk
+from tkinter import ttk
 from typing import Any
 
 
@@ -36,6 +36,9 @@ class MultiplayerView(ttk.Frame):
         self.label = ttk.Label(self, text="Enter ip of server:")
         self.ip_entry = ttk.Entry(self)
         self.enter_btn = ttk.Button(self, text="Enter")
+        self.label.pack()
+        self.ip_entry.pack()
+        self.enter_btn.pack()
 
 
 class SideView(ttk.Frame):
