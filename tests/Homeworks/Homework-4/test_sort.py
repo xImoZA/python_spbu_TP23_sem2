@@ -23,9 +23,11 @@ class TestMergeSort:
     @settings(deadline=None)
     @given(st.lists(st.integers()), st.integers(3, 100))
     def test_merge_sort_multithread(self, test_arr: list[int], n_jobs: int) -> None:
-        assert self.sort_multithread.merge_sort_multithread(test_arr, n_jobs) == sorted(test_arr)
+        assert self.sort_multithread.merge_sort_multithread1(test_arr, n_jobs) == sorted(test_arr)
+        assert self.sort_multithread.merge_sort_multithread2((test_arr, n_jobs)) == sorted(test_arr)
 
     @settings(deadline=None)
     @given(st.lists(st.integers()), st.integers(3, 100))
     def test_merge_sort_multiprocess(self, test_arr: list[int], n_jobs: int) -> None:
-        assert self.sort_multiprocess.merge_sort_multithread(test_arr, n_jobs) == sorted(test_arr)
+        assert self.sort_multiprocess.merge_sort_multithread1(test_arr, n_jobs) == sorted(test_arr)
+        assert self.sort_multiprocess.merge_sort_multithread2((test_arr, n_jobs)) == sorted(test_arr)
