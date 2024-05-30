@@ -1,5 +1,5 @@
 import math
-from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
+from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor, as_completed
 
 
 class MergeSort:
@@ -68,6 +68,38 @@ class MergeSort:
 
         with pool(max_workers=n_jobs) as executor:
             results = list(executor.map(self.merge_sort_multithread2, list_slices))
+            while len(results) > 1:
+                results.append([])
+                results = list(executor.map(self.merge_lists, zip(*[iter(results)] * 2)))
+        return results[0] if len(results) == 1 else results
+
+    def merge_sort2(
+        self, user_list: list[int], count: int, n_jobs: int, exe: ThreadPoolExecutor | ProcessPoolExecutor
+    ) -> tuple | list[int]:
+        if count < n_jobs:
+            list1, list2 = user_list[: len(user_list) // 2], user_list[len(user_list) // 2 :]
+            ft1 = exe.submit(self.merge_sort2, list1, count + 2, n_jobs, exe)
+            ft2 = exe.submit(self.merge_sort2, list2, count + 2, n_jobs, exe)
+            return ft1, ft2
+        return self.merge_sort(user_list)
+
+    def merge_sort_multithread3(self, user_list: list[int], n_jobs: int) -> list[int]:
+        pool = ThreadPoolExecutor if not self.multiprocess else ProcessPoolExecutor
+        list_slices = [user_list[: len(user_list) // 2], user_list[len(user_list) // 2 :]]
+
+        with pool(max_workers=n_jobs) as executor:
+            futures = [executor.submit(self.merge_sort2, sub_list, 2, n_jobs, executor) for sub_list in list_slices]
+            results = []
+            while len(futures) > 0:
+                for res in as_completed(futures):
+                    res1 = res.result()
+                    if isinstance(res1, tuple):
+                        futures.append(res1[0])
+                        futures.append(res1[1])
+                    else:
+                        results.append(res1)
+                    del futures[0]
+
             while len(results) > 1:
                 results.append([])
                 results = list(executor.map(self.merge_lists, zip(*[iter(results)] * 2)))

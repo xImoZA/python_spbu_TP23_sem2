@@ -4,7 +4,8 @@ from random import randint
 from typing import Callable
 
 import matplotlib.pyplot as plt
-from sort import MergeSort
+
+from src.Homeworks.Homework_4.sort import MergeSort
 
 
 def check_time(func: Callable, num_tries: int, *args: list[int] | tuple[list[int], int], **kwargs: int) -> float:
