@@ -32,7 +32,7 @@ class TestModelClickTo:
     )
     def test_find_way(self, start, end) -> None:
         model = ModelClickTo()
-        path = model.find_way(start, end, 3, True)
+        path = model.find_way(start, end, 3, False)
         if path:
             assert path[0] == start and path[-1] == end and len(path) >= 2
 
@@ -62,7 +62,7 @@ class TestMain:
     def test_main(self, monkeypatch, urls) -> None:
         fake_output = StringIO()
         monkeypatch.setattr("sys.stdout", fake_output)
-        main(urls, 3, False)
+        main(urls, 3, True)
         output = fake_output.getvalue()[20:-1].split(" -> ")
         assert output[0] == urls[0] and output[-1] == urls[-1]
         for link in urls:
