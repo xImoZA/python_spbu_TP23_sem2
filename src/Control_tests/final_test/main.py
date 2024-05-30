@@ -2,6 +2,7 @@ import time
 from argparse import ArgumentParser
 
 from loguru import logger
+
 from src.Control_tests.final_test.wiki_bfs import ModelClickTo
 
 

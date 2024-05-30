@@ -1,6 +1,7 @@
 from io import StringIO
 
 import pytest
+
 from src.Control_tests.final_test.get_wiki_links import get_links
 from src.Control_tests.final_test.main import main
 from src.Control_tests.final_test.wiki_bfs import ModelClickTo, Node, get_path

@@ -5,8 +5,9 @@ from multiprocessing.managers import ListProxy
 from queue import Queue
 from typing import Optional
 
-from src.Control_tests.final_test.get_wiki_links import get_links
 from loguru import logger
+
+from src.Control_tests.final_test.get_wiki_links import get_links
 
 
 @dataclass
