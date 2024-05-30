@@ -28,12 +28,12 @@ def get_path(end_node: Node) -> list[str]:
 
 
 class ModelClickTo:
-    def __init__(self):
-        self.visited: list[str] = Manager().list()
+    def __init__(self) -> None:
+        self.visited: ListProxy = Manager().list()
 
     @staticmethod
     def make_visit(
-        queue: Queue[Node], visited: list[str], end: str, is_result: ListProxy, unique: bool
+        queue: Queue[Node], visited: ListProxy, end: str, is_result: ListProxy, unique: bool
     ) -> Optional[list[str]]:
         cur_node = queue.get()
         if unique:
