@@ -3,7 +3,7 @@ from random import randint
 from tkinter import Tk, ttk
 from typing import Callable, Optional
 
-from src.Homeworks.Homework_6.model import Bot, Mode, Player, SmartBot, StupidBot, TicTacToeException, TicTacToeModel
+from src.Homeworks.Homework_6.model import Human, Mode, Player, SmartBot, StupidBot, TicTacToeException, TicTacToeModel
 from src.Homeworks.Homework_6.observer import Observable
 from src.Homeworks.Homework_6.view import FieldView, FinalView, MainView, SideView
 
@@ -33,7 +33,10 @@ class ViewModel:
         self._current_view: Optional[ttk.Frame] = None
 
     def _session_observer(self, mode: Mode) -> None:
-        if mode.name == "final":
+        if not mode:
+            self._model.free_cages = [i for i in range(9)]
+            self.switch("main", {})
+        elif mode.name == "final":
             self.switch("final", mode.players)
         elif mode.name == "side":
             self.switch("side", mode.players)
@@ -61,15 +64,13 @@ class MainViewModel(IViewModel):
         view.hard_btn.config(command=lambda: self.smart_bot())
 
     def play_by_self(self) -> None:
-        self._model.choose_mod(
-            "play_by_self", {"player1": Player("First", "O", []), "player2": Player("Second", "X", [])}
-        )
+        self._model.choose_mod("play_by_self", {"player1": Human("1", "O", []), "player2": Human("2", "X", [])})
 
     def stupid_bot(self) -> None:
-        self._model.choose_mod("side", {"player1": Player("You", "", []), "player2": StupidBot("Bot", "", [])})
+        self._model.choose_mod("side", {"player1": Human("You", "", []), "player2": StupidBot("Bot", "", [])})
 
     def smart_bot(self) -> None:
-        self._model.choose_mod("side", {"player1": Player("You", "", []), "player2": SmartBot("Bot", "", [])})
+        self._model.choose_mod("side", {"player1": Human("You", "", []), "player2": SmartBot("Bot", "", [])})
 
     def start(self, root: Tk, data: dict) -> ttk.Frame:
         frame = MainView(root)
@@ -114,21 +115,25 @@ class FieldViewModel(IViewModel):
         label_observer_rm = self._now_player.add_callback(
             lambda player: view.header.config(text=f"{player.name} is get move now")
         )
-        cages_observer_rm = []
-        for i in range(9):
-            view.__dict__[f"btn_{i}"].config(
-                command=lambda num_cage=i: self.make_move(
-                    num_cage, self._players[0] if self._players[0].name == "You" else None
+        if self._now_player.value:
+            cages_observer_rm = []
+            for i in range(9):
+                view.__dict__[f"btn_{i}"].config(
+                    command=lambda num_cage=i: self.make_move(
+                        self._now_player.value.make_move(num_cage, None),
+                        self._players[0] if self._players[0].name == "You" else None,
+                    )
                 )
-            )
-            cages_observer_rm.append(
-                self._model.cages[i].add_callback(lambda cage: view.__dict__[f"btn_{cage.num}"].config(text=cage.side))
-            )
+                cages_observer_rm.append(
+                    self._model.cages[i].add_callback(
+                        lambda cage: view.__dict__[f"btn_{cage.num}"].config(text=cage.side)
+                    )
+                )
 
-        if isinstance(self._now_player.value, Bot):
-            self.make_move(self._now_player.value.make_bot_move(self._model.free_cages), self._now_player.value)
+            if self._now_player.value.name == "Bot":
+                self.make_move(self._now_player.value.make_move(None, self._model.free_cages), self._now_player.value)
 
-        setattr(view, "destroy", self._destroy_wrapper(view.destroy, label_observer_rm, *cages_observer_rm))
+            setattr(view, "destroy", self._destroy_wrapper(view.destroy, label_observer_rm, *cages_observer_rm))
 
     def _destroy_wrapper(self, *args: Callable) -> Callable:
         def destroy() -> None:
@@ -145,23 +150,13 @@ class FieldViewModel(IViewModel):
                     self._players[0] if self._now_player.value == self._players[1] else self._players[1]
                 )
 
-                if isinstance(self._now_player.value, Bot):
-                    self.make_move(self._now_player.value.make_bot_move(self._model.free_cages), self._now_player.value)
+                if self._now_player.value.name == "Bot":
+                    self.make_move(
+                        self._now_player.value.make_move(None, self._model.free_cages), self._now_player.value
+                    )
 
         except TicTacToeException:
             pass
-
-    # def make_move(self, num_cage: Optional[int]) -> None:
-    #     try:
-    #         self._model.make_move(num_cage, self._now_player.value)
-    #         self._now_player.value = (
-    #             self._players[0] if self._now_player.value == self._players[1] else self._players[1]
-    #         )
-    #         if self._now_player and isinstance(self._now_player.value, Bot):
-    #             self.make_move(self._now_player.value.make_bot_move(self._model.free_cages))
-    #
-    #     except TicTacToeException:
-    #         pass
 
     def start(self, root: Tk, data: dict) -> ttk.Frame:
         frame = FieldView(root)
@@ -171,6 +166,9 @@ class FieldViewModel(IViewModel):
 
 
 class FinalViewModel(IViewModel):
+    def _bind(self, view: FinalView) -> None:
+        view.menu.config(command=self._model.return_menu)
+
     def start(self, root: Tk, data: dict) -> ttk.Frame:
         frame = FinalView(root)
         frame.grid(row=0, column=0, sticky="NSEW")
@@ -180,4 +178,5 @@ class FinalViewModel(IViewModel):
             frame.header.config(text=f"{pl1.name} win")
         else:
             frame.header.config(text=f"Draw")
+        self._bind(frame)
         return frame

@@ -10,7 +10,6 @@ class Observable(Generic[T]):
         self.callbacks: list[T2ANY_CALLABLE] = []
 
     def add_callback(self, func: T2ANY_CALLABLE) -> Callable:
-        o = self._value
         pos = len(self.callbacks)
         self.callbacks.append(func)
         return lambda: self.callbacks.pop(pos)
