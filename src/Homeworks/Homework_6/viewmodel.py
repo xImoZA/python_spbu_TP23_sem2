@@ -7,7 +7,7 @@ from typing import Callable, Optional
 
 from src.Homeworks.Homework_6.model import Human, Mode, Player, SmartBot, StupidBot, TicTacToeException, TicTacToeModel
 from src.Homeworks.Homework_6.observer import Observable
-from src.Homeworks.Homework_6.view import FieldView, FinalView, MainView, SideView
+from src.Homeworks.Homework_6.view import FieldView, FinalView, MainView, MultiplayerView, SideView
 
 
 class IViewModel(metaclass=abc.ABCMeta):
@@ -77,7 +77,7 @@ class MainViewModel(IViewModel):
 
     def smart_bot(self) -> None:
         self._model.choose_mod("side", {"player1": Human("You", "", []), "player2": SmartBot("Bot", "", [])})
-    
+
     def multiplayer(self) -> None:
         self._model.choose_mod("multiplayer", {"player1": Human("You", "", []), "player2": Human("Opponent", "", [])})
 
@@ -104,7 +104,7 @@ class MultiplayerViewModel(IViewModel):
         self._bind(frame, data)
         return frame
 
-      
+
 class SideViewModel(IViewModel):
     def _bind(self, view: SideView, data: dict) -> None:
         view.tic_btn.config(command=lambda: self.choose_side(1, data))
