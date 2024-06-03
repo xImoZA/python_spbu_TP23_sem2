@@ -25,7 +25,7 @@ class TestTicTacToeModel:
         assert self.test_model.check_win(pl1) is True
 
     @given(st.lists(st.integers(min_value=9)))
-    def test_check_win_true(self, pos_list: list[int]) -> None:
+    def test_check_win_false(self, pos_list: list[int]) -> None:
         pl1 = Human("1", "X", pos_list)
         assert self.test_model.check_win(pl1) is False
 
