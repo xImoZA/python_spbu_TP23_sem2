@@ -87,3 +87,5 @@ class FinalView(ttk.Frame):
 
         self.header = ttk.Label(self)
         self.header.grid(row=0, column=0)
+        self.menu = ttk.Button(self)
+        self.menu.grid(row=1, column=0, sticky="NSEW")
